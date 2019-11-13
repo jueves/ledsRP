@@ -77,10 +77,10 @@ def weatherToLed(refresh_freq=30, end_time=default_end_time, simple_mode=True,
             # El parpadeo mantiene encendido el porcentaje de prob de lluvia y apagado
             # el opuesto.
             while datetime.datetime.now() < iteration_end:
-                rainAction(rains, test)
+                rainAction(True, test)
                 time.sleep(2*max_lluvia_2h)
                 #GPIO.output(23, False)
-                rainAction(not rains, test)
+                rainAction(False, test)
                 time.sleep((1-max_lluvia_2h)*2)
 
     if not test:           
