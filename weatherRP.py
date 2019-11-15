@@ -33,7 +33,7 @@ darksky = DarkSky(darksky_key)
 initial_time = datetime.datetime.now()
 
 default_end_time = datetime.datetime(initial_time.year, initial_time.month,
-                                     initial_time.day+0, 20, 0)
+                                     initial_time.day+3, 20, 0)
 
 test_time = datetime.datetime(initial_time.year, initial_time.month,
                                      initial_time.day, 19, 0)
