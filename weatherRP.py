@@ -86,4 +86,4 @@ def weatherToLed(refresh_freq=30, end_time=default_end_time, simple_mode=True,
     if not test:           
         GPIO.cleanup()
 
-weatherToLed(prob_lluvia=0.09, simple_mode=False)
+weatherToLed(prob_lluvia=0.09, simple_mode=True)
