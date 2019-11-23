@@ -12,8 +12,11 @@ It sets a led notification depending on the rain forecast.
 * You also need to create the `darksky_api_key.txt` file with your own API key.
 
 ## Hardware
-I set up a led to the 23 pin (don't forget to add a resistor).  
-By default the led blinks in loops of 2 seconds lenght, being the proportion of that time with the light on equal to the probability of rain in the current hour or the next one. It chooses the maximum probability between these two.
+I set up a led connected to the PIN 23 on a Raspberry Pi (don't forget to add a resistor). 
+
+## How it works 
+By default the led blinks in loops of 2 seconds lenght, being the proportion of that time with the light on equal to the probability of rain in the current hour or the next one. It chooses highest between these two.  
+You can also set the simple mode variable in the `weatherToLed()` function to True and then get the led on just when the rain probability in this hour or the next one (it takes the highest) is over the threshold (by default 0.09).
 
 ## Future plans
 This is a proof of concept. It is still much harder to visually read the led than checking the forecast on the phone.  
