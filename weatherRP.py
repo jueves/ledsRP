@@ -9,10 +9,10 @@ Created on Tue Nov 12 18:11:56 2019
 import RPi.GPIO as GPIO
 from darksky.api import DarkSky
 from darksky.types import languages, units, weather
-import time
-import datetime
+import time, datetime
+import signal
 
-with open("darksky_api_key.txt") as file_darksky:
+with open("/home/pi/weather/darksky_api_key.txt") as file_darksky:
     darksky_key = file_darksky.read()
 darksky_key = darksky_key.strip()
 
@@ -22,23 +22,30 @@ GPIO.setup(23, GPIO.OUT)
 
 
 
-
-
 # Parámetros
 lugar = [28.488, -16.322] # la_laguna
 rains = False
 
 darksky = DarkSky(darksky_key)
 
-initial_time = datetime.datetime.now()
+#initial_time = datetime.datetime.now()
+#
+#default_end_time = datetime.datetime(initial_time.year, initial_time.month,
+#                                     initial_time.day+3, 20, 0)
+#
+#test_time = datetime.datetime(initial_time.year, initial_time.month,
+#                                     initial_time.day, 19, 0)
 
-default_end_time = datetime.datetime(initial_time.year, initial_time.month,
-                                     initial_time.day+3, 20, 0)
+class GracefulKiller:
+  kill_now = False
+  def __init__(self):
+    signal.signal(signal.SIGINT, self.exit_gracefully)
+    signal.signal(signal.SIGTERM, self.exit_gracefully)
 
-test_time = datetime.datetime(initial_time.year, initial_time.month,
-                                     initial_time.day, 19, 0)
+  def exit_gracefully(self,signum, frame):
+    self.kill_now = True
 
-
+killer = GracefulKiller()
 
 def rainAction(rains, test=False):
     if test:
@@ -46,11 +53,15 @@ def rainAction(rains, test=False):
     else:
         GPIO.output(23, rains)
 
-def weatherToLed(refresh_freq=30, end_time=default_end_time, simple_mode=True,
-                 prob_lluvia = 0.05, test=False):
+#def weatherToLed(refresh_freq=30, end_time=default_end_time, simple_mode=True,
+#                 prob_lluvia = 0.05, test=False):
 
-    while datetime.datetime.now() < end_time:
-    
+#    while (not killer.kill_now) and (datetime.datetime.now() < end_time):
+
+def weatherToLed(refresh_freq=30, simple_mode=False, prob_lluvia = 0.09,
+                 test=False):
+
+    while not killer.kill_now:
         forecast = darksky.get_forecast(
                lugar[0], lugar[1],
                extend=False, # default `False`
@@ -76,14 +87,15 @@ def weatherToLed(refresh_freq=30, end_time=default_end_time, simple_mode=True,
             # Se mantiene iterando hasta que pasen refresh_freq minutos.
             # El parpadeo mantiene encendido el porcentaje de prob de lluvia y apagado
             # el opuesto.
-            while datetime.datetime.now() < iteration_end:
+            while (not killer.kill_now) and (datetime.datetime.now() < iteration_end):
                 rainAction(True, test)
                 time.sleep(2*max_lluvia_2h)
                 #GPIO.output(23, False)
                 rainAction(False, test)
                 time.sleep((1-max_lluvia_2h)*2)
-
     if not test:           
         GPIO.cleanup()
+    else:
+        print("Simulated cleanup.")
 
-weatherToLed(prob_lluvia=0.09, simple_mode=True)
+weatherToLed()
