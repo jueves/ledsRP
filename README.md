@@ -21,3 +21,14 @@ You can also set the simple mode variable in the `weatherToLed()` function to Tr
 ## Future plans
 This is a proof of concept. It is still much harder to visually read the led than checking the forecast on the phone.  
 At some point in the future I would like to improve it setting diferent leds in a way that is more intuitive to read and understand the forecast.
+
+### Specific goals
+#### Parameters dictionary
+It could be a json file with the following content:
+* Rain treshold.
+* Simple mode or not.
+* Location
+* Darksky API key.
+More parameters could be added if needed.
+
+The file could be _config.json_ and be excluded on _.gitignore_. An example file _config.example.json_ would be included and synced to git.
