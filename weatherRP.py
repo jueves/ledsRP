@@ -1,16 +1,14 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Nov 12 18:11:56 2019
-
-@author: luis
-"""
 
 import RPi.GPIO as GPIO
 from darksky.api import DarkSky
 from darksky.types import languages, units, weather
 import time, datetime
 import signal
+
+lugar = [28.488, -16.322] # la_laguna
+
 
 with open("/home/pi/weather/darksky_api_key.txt") as file_darksky:
     darksky_key = file_darksky.read()
@@ -20,21 +18,10 @@ darksky_key = darksky_key.strip()
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(23, GPIO.OUT)
 
-
-
 # Parámetros
-lugar = [28.488, -16.322] # la_laguna
 rains = False
 
 darksky = DarkSky(darksky_key)
-
-#initial_time = datetime.datetime.now()
-#
-#default_end_time = datetime.datetime(initial_time.year, initial_time.month,
-#                                     initial_time.day+3, 20, 0)
-#
-#test_time = datetime.datetime(initial_time.year, initial_time.month,
-#                                     initial_time.day, 19, 0)
 
 class GracefulKiller:
   kill_now = False
@@ -52,11 +39,6 @@ def rainAction(rains, test=False):
         print(rains)
     else:
         GPIO.output(23, rains)
-
-#def weatherToLed(refresh_freq=30, end_time=default_end_time, simple_mode=True,
-#                 prob_lluvia = 0.05, test=False):
-
-#    while (not killer.kill_now) and (datetime.datetime.now() < end_time):
 
 def weatherToLed(refresh_freq=30, simple_mode=False, prob_lluvia = 0.09,
                  test=False):
